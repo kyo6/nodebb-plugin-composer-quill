@@ -1,11 +1,11 @@
 {
-  "name": "nodebb-plugin-composer-quill",
-  "version": "4.0.1",
+  "name": "nodebb-plugin-composer-quill-1",
+  "version": "4.0.2",
   "description": "Quill Composer for NodeBB",
   "main": "library.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NodeBB/nodebb-plugin-composer-quill"
+    "url": "https://github.com/kyo6/nodebb-plugin-composer-quill"
   },
   "keywords": [
     "nodebb",
@@ -51,9 +51,10 @@
   "devDependencies": {
     "@commitlint/cli": "20.5.0",
     "@commitlint/config-angular": "20.5.0",
+    "@eslint/js": "^10.0.0",
+    "@stylistic/eslint-plugin": "^5.0.0",
     "eslint": "10.1.0",
-    "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-import": "2.32.0",
+    "eslint-config-nodebb": "^2.0.1",
     "husky": "9.1.7",
     "lint-staged": "16.4.0"
   }

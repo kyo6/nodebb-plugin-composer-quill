@@ -52,7 +52,7 @@ plugin.checkCompatibility = function (callback) {
 	}, (err, data) => {
 		callback(err, {
 			markdown: data.active.indexOf('nodebb-plugin-markdown') === -1,	// plugin disabled
-			composer: data.active.filter(plugin => plugin.startsWith('nodebb-plugin-composer-') && plugin !== 'nodebb-plugin-composer-quill').length === 0,
+			composer: data.active.filter(plugin => plugin.startsWith('nodebb-plugin-composer-') && plugin !== 'nodebb-plugin-composer-quill-1').length === 0,
 		});
 	});
 };
