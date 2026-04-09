@@ -1,0 +1,8 @@
+{
+  "ops": [
+    { "insert": "T1C1" },
+    { "insert": "\n", "attributes": { "td": "table1|r1|c1||1|1|false" } },
+    { "insert": "T2C1" },
+    { "insert": "\n", "attributes": { "td": "table2|r1|c1||1|1|false" } }
+  ]
+}

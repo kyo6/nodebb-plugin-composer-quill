@@ -1,0 +1,10 @@
+{
+  "ops": [
+    { "insert": "Look: " },
+    {
+      "insert": { "emoji": { "src": "/emoji/smile.png" } },
+      "attributes": { "alt": "smile", "class": "emoji" }
+    },
+    { "insert": "\n" }
+  ]
+}

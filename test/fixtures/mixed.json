@@ -1,0 +1,10 @@
+{
+  "ops": [
+    { "insert": "Intro paragraph\n" },
+    { "insert": "A1" },
+    { "insert": "\n", "attributes": { "td": "t1|r1|c1||1|1|false" } },
+    { "insert": "A2" },
+    { "insert": "\n", "attributes": { "td": "t1|r1|c2||1|1|false" } },
+    { "insert": "Outro paragraph\n" }
+  ]
+}
