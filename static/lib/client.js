@@ -19,7 +19,7 @@ $(document).ready(() => {
 		}
 	};
 	$(window).on('action:app.load', () => {
-		require(['composer', 'quill-nbb'], (composer) => {
+		require(['composer', 'hooks','quill-nbb'], (composer, hooks) => {
 			$(window).on('action:composer.topic.new', (ev, data) => {
 				composer.newTopic({
 					cid: data.cid,
@@ -53,6 +53,30 @@ $(document).ready(() => {
 					title: data.title,
 					body: wrapWithBlockquote(data.body),
 				});
+			});
+
+			hooks.on('filter:composer.submit', async (hookData) => {
+				const composerEl = hookData.composerEl;
+				if (!composerEl || !composerEl.length) {
+					return hookData;
+				}
+				const quill = composerEl.find('.ql-container').data('quill');
+				if (!quill) {
+					return hookData;
+				}
+				const isEmpty = window.quill && window.quill.isEmpty && window.quill.isEmpty(quill);
+				if (isEmpty) {
+					hookData.composerData.content = '';
+					hookData.composerData.quillDelta = '';
+					return hookData;
+				}
+				const delta = quill.getContents();
+				let html = quill.getSemanticHTML();
+				// Quill 2.0.3 对空格有已知问题，可按需要保守修正
+				html = html.replaceAll(/((?:&nbsp;)*)&nbsp;/g, '$1 ');
+				hookData.composerData.quillDelta = JSON.stringify(delta);
+				hookData.composerData.content = html;
+				return hookData;
 			});
 		});
 	});

@@ -20,6 +20,15 @@ const controllers = require('./lib/controllers');
 const migrator = require('./lib/migrator');
 
 const plugin = {};
+const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+
+function hasQuillDeltaField(data) {
+	return !!data && hasOwn(data, 'quillDelta');
+}
+
+function sanitizeHtml(html) {
+	return posts.sanitize(html || '');
+}
 
 plugin.init = function (data, callback) {
 	const { router } = data;
@@ -51,7 +60,7 @@ plugin.checkCompatibility = function (callback) {
 		markdown: async.apply(meta.settings.get, 'markdown'),
 	}, (err, data) => {
 		callback(err, {
-			markdown: data.active.indexOf('nodebb-plugin-markdown') === -1,	// plugin disabled
+			markdown: data.active.indexOf('nodebb-plugin-markdown') === -1, // plugin disabled
 			composer: data.active.filter(plugin => plugin.startsWith('nodebb-plugin-composer-') && plugin !== 'nodebb-plugin-composer-quill-1').length === 0,
 		});
 	});
@@ -93,7 +102,9 @@ plugin.savePost = async (data, path = 'post') => {
 		path = 'post';
 	}
 
-	if (migrator.isDelta(data[path].content)) {
+	if (hasQuillDeltaField(data[path])) {
+		data[path].content = sanitizeHtml(data[path].content);
+	} else if (migrator.isDelta(data[path].content)) {
 		// Optimistic case: regular post via quill composer
 		data[path].quillDelta = data[path].content;
 		data[path].content = migrator.toHtml(data[path].content);
@@ -115,8 +126,12 @@ plugin.saveChat = (data, callback) => {
 		return callback(null, data);
 	}
 
-	data.quillDelta = data.content;
-	data.content = migrator.toHtml(data.content);
+	if (hasQuillDeltaField(data)) {
+		data.content = sanitizeHtml(data.content);
+	} else {
+		data.quillDelta = data.content;
+		data.content = migrator.toHtml(data.content);
+	}
 	callback(null, data);
 };
 
@@ -147,9 +162,10 @@ plugin.handleMessageEdit = async (data) => {
 	return data;
 };
 
-plugin.handleMessageCheck = async ({ content, length }) => {
+plugin.handleMessageCheck = async ({ content, length, quillDelta }) => {
 	try {
-		const delta = JSON.parse(content);
+		const source = migrator.isDelta(quillDelta) ? quillDelta : content;
+		const delta = JSON.parse(source);
 		if (!delta.ops) {
 			throw new Error();
 		}

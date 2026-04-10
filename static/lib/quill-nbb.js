@@ -133,7 +133,7 @@ define('quill-nbb', [
 
 	$(window).on('action:composer.uploadStart', (evt, data) => {
 		data.files.forEach((file) => {
-			const alertId = generateAlertId(data.post_uuid, file.filename);
+			// const alertId = generateAlertId(data.post_uuid, file.filename);
 			window.quill.uploads[file.filename] = file;
 		});
 	});
@@ -145,9 +145,9 @@ define('quill-nbb', [
 		data.preventDefault = true;
 
 		// hack to convert emoji's inserted text into... an emoji
-		require(['quill-emoji'], (Emoji) => {
-			Emoji.convert.call(quill);
-		});
+		// require(['quill-emoji'], (Emoji) => {
+		// Emoji.convert.call(quill);
+		// });
 	});
 
 	$(window).on('action:composer.updateTextareaSelection', (evt, data) => {
@@ -241,31 +241,24 @@ $(window).on('action:chat.loaded', (evt, containerEl) => {
 
 window.quill.init = function (targetEl, data, callback) {
 	require([
-		'quill', 'quill-magic-url', 'quill-emoji', 'quill-markdown-shortcuts', 'quill-table',
-		'composer/autocomplete', 'composer/drafts',
-	], (Quill, MagicUrl, Emoji, MarkdownShortcuts, TableModule, autocomplete, drafts) => {
+		'quill', 'quill-magic-url', 'composer/autocomplete', 'composer/drafts',
+	], (Quill, MagicUrl, autocomplete, drafts) => {
 		const textDirection = $('html').attr('data-dir');
 		const textareaEl = targetEl.siblings('textarea');
 
-		window.quill.configureToolbar(targetEl, data, TableModule).then(({ toolbar }) => {
+		window.quill.configureToolbar(targetEl, data).then(({ toolbar }) => {
 			// Quill...
 			Quill.register('modules/magicUrl', MagicUrl.default);
-			Quill.register('modules/markdownShortcuts', MarkdownShortcuts);
-			Quill.register('modules/table', TableModule);
 			const quill = new Quill(targetEl.get(0), {
 				theme: data.theme || 'snow',
 				modules: {
 					toolbar,
-					table: {
-						cellSelectionOnClick: false,
-					},
 					magicUrl: {
 						normalizeUrlOptions: {
 							sortQueryParameters: false,
 							defaultProtocol: 'https:',
 						},
 					},
-					markdownShortcuts: {},
 				},
 				bounds: data.bounds || document.body,
 			});
@@ -343,7 +336,7 @@ window.quill.init = function (targetEl, data, callback) {
 			quill.format('align', textDirection === 'rtl' ? 'right' : 'left');
 
 			autocomplete.init(targetEl, data.post_uuid);
-			Emoji.enable(quill);
+			// Emoji.enable(quill);
 
 			// Update textarea on editor-change event. This allows compatibility with
 			// how NodeBB handles things like drafts, etc.
@@ -363,7 +356,7 @@ window.quill.init = function (targetEl, data, callback) {
 
 			// Handle tab/enter for autocomplete
 			const doAutocomplete = function () {
-				setTimeout(Emoji.convert.bind(quill), 0);
+				// setTimeout(Emoji.convert.bind(quill), 0);
 				return !$(`.composer-autocomplete-dropdown-${data.post_uuid}:visible`).length;
 			};
 			[9, 13].forEach((keyCode) => {
@@ -387,7 +380,7 @@ window.quill.init = function (targetEl, data, callback) {
 	return window.quill;
 };
 
-window.quill.configureToolbar = async (targetEl, data, TableModule) => {
+window.quill.configureToolbar = async (targetEl, data) => {
 	const textareaEl = targetEl.siblings('textarea');
 	const [formatting, hooks] = await new Promise((resolve) => {
 		require(['composer/formatting', 'hooks'], (...libs) => resolve(libs));
@@ -399,26 +392,6 @@ window.quill.configureToolbar = async (targetEl, data, TableModule) => {
 			['bold', 'italic', 'underline', 'strike'], // toggled buttons
 			['link', 'blockquote', 'code-block'],
 			[{ list: 'ordered' }, { list: 'bullet' }],
-			[{ table: TableModule.tableOptions() }, {
-				table: [
-					'insert',
-					'remove-table',
-					'split-cell',
-					'merge-selection',
-					'append-row-above',
-					'append-row-below',
-					'append-col-before',
-					'append-col-after',
-					'remove-col',
-					'remove-row',
-					'remove-cell',
-					'remove-selection',
-					'hide-border',
-					'show-border',
-					'undo',
-					'redo',
-				],
-			}],
 			[{ script: 'sub' }, { script: 'super' }], // superscript/subscript
 			[{ color: [] }, { background: [] }], // dropdown with defaults from theme
 			[{ align: [] }],
