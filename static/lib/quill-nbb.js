@@ -6,6 +6,19 @@ window.quill = {
 	uploads: {},
 };
 
+function getDefaultExport(mod) {
+	if (mod && mod.__esModule && mod.default) {
+		return mod.default;
+	}
+	return mod;
+}
+
+function resolveQuill(mod) {
+	const unwrapped = getDefaultExport(mod);
+	const candidates = [unwrapped, mod && mod.default, mod && mod.Quill, window.Quill];
+	return candidates.find(candidate => candidate && typeof candidate.register === 'function') || unwrapped || mod;
+}
+
 define('quill-nbb', [
 	'quill',
 	'composer/resize',
@@ -13,6 +26,7 @@ define('quill-nbb', [
 	'slugify',
 	'alerts',
 ], (Quill, resize, components, slugify, alerts) => {
+	Quill = resolveQuill(Quill);
 	$(window).on('action:composer.loaded', (ev, data) => {
 		const postContainer = $(`.composer[data-uuid="${data.post_uuid}"]`);
 		const targetEl = postContainer.find('.write-container div');
@@ -241,25 +255,41 @@ $(window).on('action:chat.loaded', (evt, containerEl) => {
 
 window.quill.init = function (targetEl, data, callback) {
 	require([
-		'quill', 'quill-magic-url', 'composer/autocomplete', 'composer/drafts',
-	], (Quill, MagicUrl, autocomplete, drafts) => {
+		'quill', 'quill-magic-url', 'composer/autocomplete', 'composer/drafts','quill-table-up-nbb',
+	], (Quill, MagicUrl, autocomplete, drafts, tableUpNbb) => {
+		Quill = resolveQuill(Quill);
+		MagicUrl = getDefaultExport(MagicUrl);
 		const textDirection = $('html').attr('data-dir');
 		const textareaEl = targetEl.siblings('textarea');
 
-		window.quill.configureToolbar(targetEl, data).then(({ toolbar }) => {
+		const isSnow = (data.theme || 'snow') === 'snow';
+		let tableUpCtx = null;
+		if (isSnow) {
+			const TableUp = tableUpNbb.ensureTableUpRegistered();
+			tableUpCtx = {
+				TableUp,
+				tableUpOptions: tableUpNbb.getTableUpModuleOptions(),
+			};
+		}
+
+		window.quill.configureToolbar(targetEl, data, tableUpCtx).then(({ toolbar }) => {
 			// Quill...
-			Quill.register('modules/magicUrl', MagicUrl.default);
-			const quill = new Quill(targetEl.get(0), {
-				theme: data.theme || 'snow',
-				modules: {
-					toolbar,
-					magicUrl: {
-						normalizeUrlOptions: {
-							sortQueryParameters: false,
-							defaultProtocol: 'https:',
-						},
+			Quill.register('modules/magicUrl', MagicUrl);
+			const modules = {
+				toolbar,
+				magicUrl: {
+					normalizeUrlOptions: {
+						sortQueryParameters: false,
+						defaultProtocol: 'https:',
 					},
 				},
+			};
+			if (tableUpCtx) {
+				modules[tableUpCtx.TableUp.moduleName] = tableUpCtx.tableUpOptions;
+			}
+			const quill = new Quill(targetEl.get(0), {
+				theme: data.theme || 'snow',
+				modules,
 				bounds: data.bounds || document.body,
 			});
 			targetEl.data('quill', quill);
@@ -380,7 +410,7 @@ window.quill.init = function (targetEl, data, callback) {
 	return window.quill;
 };
 
-window.quill.configureToolbar = async (targetEl, data) => {
+window.quill.configureToolbar = async (targetEl, data, tableUpCtx) => {
 	const textareaEl = targetEl.siblings('textarea');
 	const [formatting, hooks] = await new Promise((resolve) => {
 		require(['composer/formatting', 'hooks'], (...libs) => resolve(libs));
@@ -399,6 +429,12 @@ window.quill.configureToolbar = async (targetEl, data) => {
 		],
 		handlers: {},
 	};
+
+	if (tableUpCtx && tableUpCtx.TableUp) {
+		const toolName = tableUpCtx.TableUp.toolName;
+		// 必须是一层「控件数组」，与 quill modules/toolbar addControls 约定一致；勿用 { toolName: [] } 作为一行
+		toolbar.container.splice(toolbar.container.length - 1, 0, [{ [toolName]: [] }]);
+	}
 
 	// Configure toolbar
 	const toolbarHandlers = formatting.getDispatchTable();

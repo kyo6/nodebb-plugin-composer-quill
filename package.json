@@ -1,10 +1,9 @@
 {
   "name": "nodebb-plugin-composer-quill-1",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Quill Composer for NodeBB",
   "main": "library.js",
   "scripts": {
-    "playground": "node playground/server.js",
     "test": "jest --config=jest.config.cjs"
   },
   "repository": {
@@ -15,11 +14,12 @@
     "nodebb",
     "plugin",
     "composer",
-    "quill"
+    "quill2",
+    "quill-table"
   ],
   "author": {
     "name": "kyo6",
-    "email": "sales@nodebb.org"
+    "email": "kyokyoliu@gmail.com"
   },
   "license": "MIT",
   "bugs": {
@@ -31,16 +31,14 @@
   },
   "dependencies": {
     "async": "^3.2.0",
-    "express": "^5.2.1",
     "is-html": "^2.0.0",
-    "jquery": "^4.0.0",
     "markdown-it": "^12.0.0",
     "node-quill-converter": "^0.3.2",
     "quill": "^2.0.3",
     "quill-delta-to-html": "^0.12.0",
+    "quill-table-up": "^3.5.1",
     "quill-magic-url": "^4.0.0",
     "quill-markdown-shortcuts": "^0.0.10",
-    "quill-table-up": "^3.5.1",
     "screenfull": "^5.0.0"
   },
   "husky": {

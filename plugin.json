@@ -2,18 +2,54 @@
 	"id": "nodebb-plugin-composer-quill",
 	"url": "https://github.com/NodeBB/nodebb-plugin-composer-quill",
 	"hooks": [
-		{ "hook": "static:app.load", "method": "init" },
-		{ "hook": "filter:admin.header.build", "method": "addAdminNavigation" },
-		{ "hook": "filter:composer.build", "method": "build" },
-		{ "hook": "filter:post.create", "method": "savePost" },
-		{ "hook": "filter:post.edit", "method": "savePost" },
-		{ "hook": "filter:post-queue.save", "method": "savePostQueue" },
-		{ "hook": "filter:composer.push", "method": "append" },
-		{ "hook": "filter:messaging.save", "method": "saveChat" },
-		{ "hook": "filter:messaging.edit", "method": "saveChat" },
-		{ "hook": "filter:post.getRawPost", "method": "handleRawPost" },
-		{ "hook": "filter:messaging.getFields", "method": "handleMessageEdit" },
-		{ "hook": "filter:messaging.checkContent", "method": "handleMessageCheck" }
+		{
+			"hook": "static:app.load",
+			"method": "init"
+		},
+		{
+			"hook": "filter:admin.header.build",
+			"method": "addAdminNavigation"
+		},
+		{
+			"hook": "filter:composer.build",
+			"method": "build"
+		},
+		{
+			"hook": "filter:post.create",
+			"method": "savePost"
+		},
+		{
+			"hook": "filter:post.edit",
+			"method": "savePost"
+		},
+		{
+			"hook": "filter:post-queue.save",
+			"method": "savePostQueue"
+		},
+		{
+			"hook": "filter:composer.push",
+			"method": "append"
+		},
+		{
+			"hook": "filter:messaging.save",
+			"method": "saveChat"
+		},
+		{
+			"hook": "filter:messaging.edit",
+			"method": "saveChat"
+		},
+		{
+			"hook": "filter:post.getRawPost",
+			"method": "handleRawPost"
+		},
+		{
+			"hook": "filter:messaging.getFields",
+			"method": "handleMessageEdit"
+		},
+		{
+			"hook": "filter:messaging.checkContent",
+			"method": "handleMessageCheck"
+		}
 	],
 	"scss": [
 		"../nodebb-plugin-composer-default/static/scss/composer.scss",
@@ -22,10 +58,11 @@
 		"./static/scss/overrides.scss"
 	],
 	"modules": {
-		"quill.js": "./node_modules/quill/dist/quill.js",
+		"quill.js": "./static/lib/quill-export.js",
 		"quill-magic-url.js": "./node_modules/quill-magic-url/dist/index.js",
 		"quill-markdown-shortcuts.js": "./node_modules/quill-markdown-shortcuts/dist/markdownShortcuts.js",
-		"quill-table.js": "./node_modules/quill-table-up/dist/index.js",
+		"quill-table-up.js": "./node_modules/quill-table-up/dist/index.js",
+		"quill-table-up-nbb.js": "./static/lib/quill-table-up-nbb.js",
 		"quill-emoji.js": "./static/lib/emoji.js",
 		"composer.js": "../nodebb-plugin-composer-default/static/lib/composer.js",
 		"composer/categoryList.js": "../nodebb-plugin-composer-default/static/lib/composer/categoryList.js",
