@@ -1,10 +1,17 @@
-[component="post/content"], [component="chat/messages"] {
+[component="post/content"],
+[component="chat/messages"] {
+	table {
+		--ql-table-border: #ddd;
+		--ql-table-th-bg: #f7f8fa;
+	}
 	.ql-align-center {
 		text-align: center;
 	}
+
 	.ql-align-right {
 		text-align: right;
 	}
+
 	.ql-align-justify {
 		text-align: justify;
 	}
@@ -13,15 +20,80 @@
 	.ql-font-serif {
 		font-family: Georgia, "Times New Roman", serif;
 	}
+
 	.ql-font-monospace {
 		font-family: Monaco, "Courier New", monospace;
 	}
+
 	.ql-table-wrapper {
 		width: 100%;
 		overflow: auto;
 
+		.ql-table-caption {
+			position: relative;
+			word-break: break-word;
+			outline: 0
+		}
+
+		.ql-table-cell {
+			padding: 8px 12px;
+			border-color: transparent;
+			font-size: 14px;
+			outline: 0;
+			overflow: auto
+		}
+
+		.ql-table-cell-inner {
+			display: inline-block;
+			min-width: 100%;
+			word-break: break-word;
+			outline: 0;
+			counter-reset: list-0
+		}
+
+		.ql-table tr+tr td,
+		.ql-table tr+tr th {
+			border-top: none
+		}
+
+		.ql-table td,
+		.ql-table th {
+			border: 1px solid var(--ql-table-border,#ddd);
+		}
+
+		.ql-table td+td,
+		.ql-table td+th,
+		.ql-table th+td,
+		.ql-table th+th {
+			border-left: none
+		}
+
 		.ql-table-cell p {
 			margin: 0;
 		}
+	}
+
+	table tr+tr td,
+	table tr+tr th {
+		border-top: none
+	}
+
+	table td,
+	table th {
+		border: 1px solid var(--ql-table-border, #ddd);
+		padding: 8px 12px;
+		color: #4a4a4a;
+	}
+
+	table th {
+		background-color: var(--ql-table-th-bg, #f7f8fa);
+		font-weight: bold;
+	}
+
+	table td+td,
+	table td+th,
+	table th+td,
+	table th+th {
+		border-left: none
 	}
 }
