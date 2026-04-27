@@ -283,6 +283,9 @@ window.quill.init = function (targetEl, data, callback) {
 						defaultProtocol: 'https:',
 					},
 				},
+				uploader: {
+					handler() {},
+				},
 			};
 			if (tableUpCtx) {
 				modules[tableUpCtx.TableUp.moduleName] = tableUpCtx.tableUpOptions;
