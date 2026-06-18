@@ -4,6 +4,19 @@
 		--ql-table-border: #ddd;
 		--ql-table-th-bg: #f7f8fa;
 	}
+	.ql-table {
+		display: table;
+		border-collapse: collapse;
+		table-layout: fixed;
+		width: auto;
+	}
+	.ql-table[data-full] {
+		width: 100%;
+	}
+	.ql-table col {
+		display: table-column;
+		table-layout: fixed;
+	}
 	.ql-align-center {
 		text-align: center;
 	}

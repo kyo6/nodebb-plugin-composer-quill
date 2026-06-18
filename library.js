@@ -30,6 +30,17 @@ function sanitizeHtml(html) {
 	return posts.sanitize(html || '');
 }
 
+
+plugin.sanitizeConfig = function (config) {
+	// quill-table-up 需要 rowspan / colspan 来正确渲染合并单元格
+	const tableTags = ['td', 'th'];
+	tableTags.forEach((tag) => {
+		config.allowedAttributes[tag] = (config.allowedAttributes[tag] || []).concat(['rowspan', 'colspan']);
+	});
+	return config;
+};
+
+
 plugin.init = function (data, callback) {
 	const { router } = data;
 	const hostMiddleware = data.middleware;

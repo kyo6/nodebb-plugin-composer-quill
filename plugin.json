@@ -49,6 +49,10 @@
 		{
 			"hook": "filter:messaging.checkContent",
 			"method": "handleMessageCheck"
+		},
+		{
+			"hook": "filter:sanitize.config",
+			"method": "sanitizeConfig"
 		}
 	],
 	"scss": [
